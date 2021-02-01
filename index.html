@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- COLLEGAMENTO FOGLIO DI STYLE  -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- COLLEGAMENTO CDN VUE JS  -->
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <!-- COLLEGAMENTO FONT AWESOME  -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css">
+    <!-- COLLEGAMENTO MOMENT  -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+    <title>BoolZap</title>
+</head>
+<body>
+
+    <!--CONTAINER: Container in cui viene applicata l'azione di Vue js  -->
+    <div id="container">
+
+        <!-- CONTAINER: Box sinistra  -->
+        <div class="box-left">
+
+            <!-- CONTAINER: Box sinistra header  -->
+            <div class="header-left">
+                <!-- CONTAINER: Box sinistra header Account personale  -->
+                <div class="container-account">
+                    <img src="img/avatar_2.jpg" alt="">
+                    <h3>Vincenzo Donato</h3> 
+                </div>
+                <!-- FINE CONTAINER: Box sinistra header Account personale  -->
+
+                <!-- ICONS HEADER  -->
+                <i class=" fas fa-circle-notch"></i>
+                <i class=" fas fa-comment-alt"></i>
+                <i class=" fas fa-ellipsis-v"></i>
+
+            </div>
+            <!-- FINE CONTAINER: Box sinistra header  -->
+
+
+            <!-- CONTAINER: Box delle notifiche su desktop  -->
+            <div class="box-notice-left">
+
+                <i class="fas fa-bell-slash"></i>
+                <div class="box-notice-info">
+                    <h5>Ricevi notifiche di nuovi messaggi</h5>
+                    <a href="#">Attiva notifiche desktop</a>
+                </div>
+
+            </div>
+            <!--FINE CONTAINER: Box delle notifiche su desktop  -->
+
+            <!-- CONTAINER: Search bar  -->
+            <div class="search-bar-left">
+                <i class="fas fa-search"><input type="text" v-model='casellaTestoCerca' @keyup='cerca()' placeholder="Cerca o inizia una nuova chat" name="" id=""></i>
+            </div>
+            <!-- FINE CONTAINER: Search bar  -->
+
+
+            <!-- CONTAINER: Box lista account messaggi  -->
+            <div class="box-messaggi-left">
+                <ul class="container-account-message">
+                    <li  v-for= "(utente, index) in utenti" v-if='utenti[index].visible == true' :class='(index == posizione) ? "active" : ""'  class='border-bottom'  @click='apriChat(index)'>
+                        <p v-if = 'attesa == false'>{{utenti[index].memoridate}}</p>
+                        <p v-else>{{utenti[index].memoridate}}</p>
+                        <div>
+                            <img  :src="utente.avatar" alt="">
+                            <h3>{{utente.nome}}</h3>
+                        </div>
+                        <p>{{utenti[index].conversazione[utenti[index].conversazione.length - 1]}}</p>
+                    </li>
+                </ul>
+            </div>
+            <!-- FINE CONTAINER: Box lista account messaggi  -->
+
+        </div>
+        <!--FINE CONTAINER: Box sinistra  -->
+
+        <!-- CONTAINER: Box destra  -->
+        <div class="box-right">
+
+            <!-- CONTAINER: Box destra header -->
+            <div class="header-right">
+                
+                <!-- CONTAINER: Box destra header messaggio aperto  -->
+                <div class="container-open-message">
+
+                    <!-- Img avatar  -->
+                    <img :src="utenti[posizione].avatar" alt="">
+                    
+                    <!-- Box-info avatar  -->
+                    <div class="box-info-account-message-open "> 
+                        <h3>{{utenti[posizione].nome}}</h3> 
+                        <p>Ultimo accesso oggi alle: {{utenti[posizione].memoridate}}</p>
+                    </div>
+                    <!-- Fine Box-info avatar  -->
+
+                    <!-- Box per icone messaggio aperto  -->
+                    <div class="box-icons-header-right">
+                        <i class="fas fa-search"></i>
+                        <i class="fas fa-paperclip"></i>
+                        <i class=" fas fa-ellipsis-v"></i>
+                    </div>
+                    <!-- Fine Box per icone messaggio aperto  -->
+
+                </div>
+                <!-- FINE CONTAINER: Box destra header messaggio aperto  -->
+
+            </div>
+
+            <!-- CONTAINER: Container messaggio aperto  -->
+            <div class="container-mex"  >
+
+                <ul v-for='(messaggio, index) in utenti[posizione].messages ' >
+                    <li class="box-message" v-if = 'messaggio.status == "received"'>
+                        <div class='utente'>
+                            <i  @click='frecciaShow(index)'  class="fas fa-angle-down">
+                                <p @click='cancella(index)' :class='(index == prov) ? "show" : "hide"'   class="finestra"> Cancella</p>
+                            </i>
+                            <p>{{messaggio.text}}</p>
+                            <span>{{messaggio.date}}</span>
+                        </div>
+                    </li>
+                    <li class="box-message" v-else-if ='messaggio.status == "sent"'>
+                        <div class="profilo">
+                            <i  @click='frecciaShow(index)'  class="fas fa-angle-down">
+                                <p @click='cancella(index)' :class='(index == prov) ? "show" : "hide"'  class="finestra"> Cancella</p>
+                            </i>
+                            <p>{{messaggio.text}}</p>
+                            <span>{{messaggio.date}}</span>
+                        </div>
+                    </li>
+                </ul>
+                
+            </div>
+            <!-- FINE CONTAINER: Container messaggio aperto  -->
+
+            <!-- CONTAINER: Footer right  -->
+            <div class="footer-right">
+                <i class="far fa-smile"></i>
+                <input type="text" @keydown.enter='invioMessaggio()' v-model='casellaTesto' placeholder="Scrivi un messaggio" name="" id="">
+                <i class="fas fa-microphone"></i>
+            </div>
+            <!--FINE CONTAINER: Footer right  -->
+
+            
+        </div>
+        <!--FINE CONTAINER: Box destra  -->
+
+    </div>
+    <!-- FINE CONTAINER: Container in cui viene applicata l'azione di Vue js  -->
+    
+
+    <!-- COLLEGAMENTOPAGINA SCRIPT  -->
+    <script src="js/script.js"></script>
+    <!-- FINE COLLEGAMENTOPAGINA SCRIPT  -->
+
+
+</body>
+</html>
